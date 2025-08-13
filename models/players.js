@@ -5,14 +5,14 @@ const Util = require("../utils/slot_utils");
 const EUtil = require("../utils/engine_utils");
 axios.defaults.timeout = 10000;
 const rtpConfig = {
-    BuyBonusDefaultMulti: 10000, //bonus buy
-    FreeMinMulti: 1000,   //min win jackpot
-    JackpotNormalStart: 10, //min range to new bonuS
-    JackpotNormalEnd: 20, //max range to new bonus
-    JackpotLongPercent:50, // chance to big range
-    JackpotLongStart: 30, //min range to new bonuS LONG
-    JackpotLongEnd: 40, //max range to new bonus LONG
-    SmallBaseMaxMulti: 1000, //max min win
+    BuyBonusDefaultMulti: 100, //bonus buy
+    FreeMinMulti: 10,   //min win jackpot
+    JackpotNormalStart: 50, //min range to new bonuS
+    JackpotNormalEnd: 200, //max range to new bonus
+    JackpotLongPercent:5, // chance to big range
+    JackpotLongStart: 300, //min range to new bonuS LONG
+    JackpotLongEnd: 400, //max range to new bonus LONG
+    SmallBaseMaxMulti: 10, //max min win
 };
 const GameServers = {
     vs20doghouse: {
@@ -875,10 +875,10 @@ module.exports = (app) => {
             callStatus: Sequelize.STRING,
             //           5                                                      .
             jackpotCome: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 90 }, // 2022-12-09 18:00 Julian                       .
-            baseWinCome: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 5 },
-            highBaseCome: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 5 },
-            jackpotLimit: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 90 },
-            highBaseLimit: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 50 },
+            baseWinCome: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 3 },
+            highBaseCome: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 10 },
+            jackpotLimit: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 1000 },
+            highBaseLimit: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 250 },
             machine: {
                 type: Sequelize.TEXT("long"),
                 get() {
@@ -990,7 +990,7 @@ module.exports = (app) => {
     Player.prototype.setBalance = function (debit, credit) {
         //                                                      .
         if (this.callHistId <= 0) {
-              console.log(debit,credit)
+            
             this.totalDebit += debit;
             this.totalCredit += credit;
             this.realRtp = this.totalDebit ? ((this.totalCredit / this.totalDebit) * 100).toFixed(2) : 100;

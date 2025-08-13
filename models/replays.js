@@ -11,7 +11,7 @@ module.exports = (app) => {
             bet: { type: Sequelize.DOUBLE(20, 2), allowNull: false, defaultValue: 0 },
             win: { type: Sequelize.DOUBLE(20, 2), allowNull: false, defaultValue: 0 },
             rtp: { type: Sequelize.DOUBLE(10, 2), allowNull: false, defaultValue: 0 },
-            playedDate: { type: Sequelize.INTEGER, allowNull: false, defaultValue: 0 },
+            playedDate: { type: Sequelize.BIGINT, allowNull: false, defaultValue: 0 },
             data: { type: Sequelize.TEXT("long"), allowNull: false},
             sharedLink: { type: Sequelize.STRING, allowNull: false, defaultValue: "" },
         },
