@@ -1,0 +1,33 @@
+# Используем официальный образ Node.js (LTS версия)
+FROM node:22-alpine as builder
+
+# Устанавливаем рабочую директорию внутри контейнера
+WORKDIR /app
+
+# Копируем package.json и package-lock.json (если есть) для установки зависимостей
+COPY package*.json ./
+
+# Устанавливаем зависимости
+RUN npm install
+
+# Копируем весь исходный код приложения
+COPY . .
+
+# Указываем порт, который будет открыт
+EXPOSE 8940
+
+# Указываем переменные окружения по умолчанию
+ENV PORT=8940
+ENV GAME_HOST=http://localhost:8940
+ENV REPLAY_HOST=http://localhost:8940
+ENV REAL_GAME_HOST=http://localhost:8940
+ENV ASSET_HOST=http://localhost:8940/resources
+ENV PROMO_HOST=http://localhost:8940
+ENV DB_HOST=localhost
+ENV DB_PORT=3306
+ENV DB_USER=root
+ENV DB_PASSWORD=MADBREAK1
+ENV DB_NAME=game_db
+
+# Команда для запуска приложения
+CMD ["node", "server.js"]
