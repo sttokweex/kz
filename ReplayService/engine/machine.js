@@ -23,7 +23,7 @@ module.exports.OnRequest_GameService = async (req, res) => {
            
             await player.HandleSpin(param, user);
             await SaveHistory(req, user, player);
-             await player.Save(param);
+           
             break;
         case "doCollect": player.HandleCollect(param); break;
         case "doBonus": player.HandleBonus(param); break;
@@ -36,7 +36,7 @@ module.exports.OnRequest_GameService = async (req, res) => {
     }
 
     await HandleBalance(param, player, user);
-
+    await player.Save(param);
     var result = Util.Result4Client(player.currentApi);
     await SaveReplay(req.body, player, req.app.db.Replay);
 
@@ -59,6 +59,7 @@ async function HandleBalance(param, player, user) {
         }
 
         if (debit > 0 || credit > 0) {
+          
             player.setBalance(debit, credit);
 
             var logStr = `(${player.curIndex}    - ${player.userCode}, ${player.gameCode}, ${user.balance})`;
@@ -192,7 +193,7 @@ async function checkAvailable(req, res) {
     let player = redisObj[gameCode] ? Player.build(redisObj[gameCode]) : null;
 
     if (!(player instanceof Player)) {
-        [player, created] = await Player.findOrCreate({ where: { gameCode, userCode: user.email } });
+        [player, created] = await Player.findOrCreate({ where: { token:user.token,gameCode, userCode: user.email } });
         if (created) {
             Object.assign(player, { nextJackpot: Math.floor(Math.random() * 20) * 7 + 60 });
         }

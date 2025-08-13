@@ -12,7 +12,7 @@ const rtpConfig = {
     JackpotLongPercent:50, // chance to big range
     JackpotLongStart: 30, //min range to new bonuS LONG
     JackpotLongEnd: 40, //max range to new bonus LONG
-    SmallBaseMaxMulti: 20, //max min win
+    SmallBaseMaxMulti: 1000, //max min win
 };
 const GameServers = {
     vs20doghouse: {
@@ -990,6 +990,7 @@ module.exports = (app) => {
     Player.prototype.setBalance = function (debit, credit) {
         //                                                      .
         if (this.callHistId <= 0) {
+              console.log(debit,credit)
             this.totalDebit += debit;
             this.totalCredit += credit;
             this.realRtp = this.totalDebit ? ((this.totalCredit / this.totalDebit) * 100).toFixed(2) : 100;
@@ -1008,6 +1009,9 @@ module.exports = (app) => {
         this.callPattern = this.callPattern || {};
         this.purchaseCallPattern = this.purchaseCallPattern || {};
         this.currentApi = this.currentApi || {};
+        
+        // Генерация токена при создании
+       
 
         let ApiManager = require(GameServers[this.gameCode].apiManager);
         this.apiManager = new ApiManager();

@@ -9,6 +9,7 @@ const app = express();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 const redis = require("redis");
+
 require("dotenv").config();
 
 app.set("views", path.join(__dirname, "/")); // путь к папке с шаблонами
@@ -123,12 +124,13 @@ async function start() {
     try {
         // Подключение к базе данных
         await sequelize.authenticate();
+
         logger.info("✅ Успешное подключение к базе данных");
 
         // Если требуется синхронизация моделей:
-        // await sequelize.sync(); // или { alter: true } / { force: true } по необходимости
+        //  // или { alter: true } / { force: true } по необходимости
         logger.info("✅ Модели инициализированы");
-        
+    
         // Используем in-memory Redis без попыток подключения
         logger.info("✅ Используется Redis fallback (in-memory)");
 
