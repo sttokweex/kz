@@ -1,43 +1,53 @@
 const fs = require('fs');
 
-module.exports = async (app) => {
-    if (!app || !app.db || !app.db.sequelize) {
-        console.error('❌ Error: app.db.sequelize is not defined');
-        return;
-    }
-
-    const logger = app.logger || console; // Fallback to console if logger is missing
-    const data = fs.readFileSync('./db/updator.sql', 'utf8');
-    const sqlArray = data.split(';')
-        .map(query => query.trim())
-        .filter(query => query && !query.includes('updator.sql'));
-
-    let nUpdatedSQL = 0;
-
-    for (const query of sqlArray) {
-        let result;
+module.exports = (app) => {
+    // Define createOrFindGame
+    const createOrFindGame = async () => {
         try {
-            result = await app.db.sequelize.query(query, {
-                type: app.db.sequelize.QueryTypes.RAW,
-                logging: msg => logger.debug(msg),
+            const [game, created] = await app.db.Game.findOrCreate({
+                where: { g_name: 'vs20doghouse' },
+                defaults: {
+                    g_name: 'vs20doghouse',
+                    g_title: 'The Dog House'
+                    // createdAt and updatedAt are managed by Sequelize automatically
+                }
             });
-            logger.info(`[SUCCESS] Query executed: ${query.substring(0, 50)}...`);
-            if (result[1] && result[1].affectedRows > 0) {
-                nUpdatedSQL++;
-                logger.info(`Affected rows: ${result[1].affectedRows}`);
-            }
-        } catch (e) {
-            if (e.message.includes('Duplicate column') || e.message.includes('already exists')) {
-                logger.warn(`[SKIP] Table or column already exists: ${query.substring(0, 50)}...`);
-            } else {
-                logger.error(`[ERROR] ${e.message}: ${query.substring(0, 50)}...`);
-            }
+            console.log(created ? 'Game created' : 'Game already exists', game.toJSON());
+            return game;
+        } catch (error) {
+            console.error('Error creating or finding game:', error);
+            throw error;
         }
-    }
+    };
 
-    if (nUpdatedSQL > 0) {
-        logger.info(`* Updating Data Completed! [${nUpdatedSQL} Changes]`);
-    } else {
-        logger.info(`* Updating Data Completed! [No Change]`);
-    }
+    // Define createOrFindUser
+    const createOrFindUser = async () => {
+        try {
+            const [user, created] = await app.db.User.findOrCreate({
+                where: { login: 'test_user', email: 'test@example.com' },
+                defaults: {
+                    login: 'test_user',
+                    email: 'test@example.com',
+                    token: 'test_token_123',
+                    balance: 100000,
+                    realRtp: 0,
+                    targetRtp: 500,
+                    totalDebit: 0,
+                    totalCredit: 0
+                    // createdAt and updatedAt are managed by Sequelize automatically
+                }
+            });
+            console.log(created ? 'User created' : 'User already exists', user.toJSON());
+            return user;
+        } catch (error) {
+            console.error('Error creating or finding user:', error);
+            throw error;
+        }
+    };
+
+    // Return an object containing the functions
+    return {
+        createOrFindGame,
+        createOrFindUser
+    };
 };

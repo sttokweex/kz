@@ -6,6 +6,7 @@ module.paths.push(path.join(__dirname, "ReplayService"));
 const logger = require('./config/logger');
 const express = require("express");
 const app = express();
+const { createOrFindGame, createOrFindUser } = require("./db/updator.js")(app);
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 const redis = require("redis");
@@ -124,9 +125,11 @@ async function start() {
     try {
         // Подключение к базе данных
         await sequelize.authenticate();
-
+        
         logger.info("✅ Успешное подключение к базе данных");
-
+        await sequelize.sync();
+        await createOrFindGame();
+        await createOrFindUser();
         // Если требуется синхронизация моделей:
         //  // или { alter: true } / { force: true } по необходимости
         logger.info("✅ Модели инициализированы");

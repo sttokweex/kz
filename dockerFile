@@ -26,7 +26,7 @@ ENV PROMO_HOST=http://localhost:8940
 ENV DB_HOST=localhost
 ENV DB_PORT=3306
 ENV DB_USER=root
-ENV DB_PASSWORD=MADBREAK1
+ENV DB_PASSWORD=a2pe4zx5p1
 ENV DB_NAME=game_db
 
 # Команда для запуска приложения
