@@ -6,11 +6,11 @@ services:
       - "8940:8940"
     environment:
       - PORT=8940
-      - GAME_HOST=http://localhost:8940
-      - REPLAY_HOST=http://localhost:8940
-      - REAL_GAME_HOST=http://localhost:8940
-      - ASSET_HOST=http://localhost:8940/resources
-      - PROMO_HOST=http://localhost:8940
+      - GAME_HOST=http://51.250.83.228:8940
+      - REPLAY_HOST=http://51.250.83.228:8940
+      - REAL_GAME_HOST=http://51.250.83.228:8940
+      - ASSET_HOST=http://51.250.83.228:8940/resources
+      - PROMO_HOST=http://51.250.83.228:8940
       - DB_HOST=mysql
       - DB_PORT=3306
       - DB_USER=root

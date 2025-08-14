@@ -18,11 +18,11 @@ EXPOSE 8940
 
 # Указываем переменные окружения по умолчанию
 ENV PORT=8940
-ENV GAME_HOST=http://localhost:8940
-ENV REPLAY_HOST=http://localhost:8940
-ENV REAL_GAME_HOST=http://localhost:8940
-ENV ASSET_HOST=http://localhost:8940/resources
-ENV PROMO_HOST=http://localhost:8940
+ENV GAME_HOST=http://51.250.83.228:8940
+ENV REPLAY_HOST=http://51.250.83.228:8940
+ENV REAL_GAME_HOST=http://51.250.83.228:8940
+ENV ASSET_HOST=http://51.250.83.228:8940/resources
+ENV PROMO_HOST=http://51.250.83.228:8940
 ENV DB_HOST=localhost
 ENV DB_PORT=3306
 ENV DB_USER=root
