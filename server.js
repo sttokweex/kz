@@ -68,7 +68,18 @@ logger.info('⚠️ Using Redis fallback mode (in-memory)...');
 
 const inMemoryStore = new Map();
 
-
+module.exports = {
+  rtpConfig: {
+    BuyBonusDefaultMulti: Number(process.env.BuyBonusDefaultMulti) || 0,
+    FreeMinMulti: Number(process.env.FreeMinMulti) || 0,
+    JackpotNormalStart: Number(process.env.JackpotNormalStart) || 0,
+    JackpotNormalEnd: Number(process.env.JackpotNormalEnd) || 0,
+    JackpotLongPercent: Number(process.env.JackpotLongPercent) || 0,
+    JackpotLongStart: Number(process.env.JackpotLongStart) || 0,
+    JackpotLongEnd: Number(process.env.JackpotLongEnd) || 0,
+    SmallBaseMaxMulti: Number(process.env.SmallBaseMaxMulti) || 0,
+  }
+};
 app.redis_client = {
     get: (key, callback) => {
         if (typeof callback === 'function') {

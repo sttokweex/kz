@@ -195,7 +195,9 @@ async function checkAvailable(req, res) {
     if (!(player instanceof Player)) {
         [player, created] = await Player.findOrCreate({ where: { token:user.token,gameCode, userCode: user.email } });
         if (created) {
+            
             Object.assign(player, { nextJackpot: Math.floor(Math.random() * 20) * 7 + 60 });
+           
         }
     }
 

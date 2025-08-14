@@ -1,19 +1,12 @@
 const MD5 = require("md5.js");
+const { rtpConfig } = require("./../server");
 const JSON5 = require("json5");
 const axios = require("axios");
 const Util = require("../utils/slot_utils");
 const EUtil = require("../utils/engine_utils");
+
 axios.defaults.timeout = 10000;
-const rtpConfig = {
-    BuyBonusDefaultMulti: 100, //bonus buy
-    FreeMinMulti: 10,   //min win jackpot
-    JackpotNormalStart: 50, //min range to new bonuS
-    JackpotNormalEnd: 200, //max range to new bonus
-    JackpotLongPercent:5, // chance to big range
-    JackpotLongStart: 300, //min range to new bonuS LONG
-    JackpotLongEnd: 400, //max range to new bonus LONG
-    SmallBaseMaxMulti: 10, //max min win
-};
+
 const GameServers = {
     vs20doghouse: {
         apiManager: "../ReplayService/engine/machines/1_DogHouse/DogApiManager.js",
@@ -1392,9 +1385,12 @@ module.exports = (app) => {
             pattern = this.findFreeByRtp(freeMinMoney, freeMaxMoney);
 
             if (pattern) {
+                console.log(rtpConfig)
                 this.nextJackpot = Util.random(rtpConfig.JackpotNormalStart, rtpConfig.JackpotNormalEnd);
+                console.log(this.nextJackpot);
                 if (Util.probability(rtpConfig.JackpotLongPercent)) {
                     this.nextJackpot = Util.random(rtpConfig.JackpotLongStart, rtpConfig.JackpotLongEnd);
+                    console.log(this.nextJackpot);
                 }
                 this.lastJackpotIndex = this.curIndex;
                 this.logInfo = {
