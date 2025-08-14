@@ -7,25 +7,25 @@ services:
     ports:
       - "8940:8940"
     environment:
-      - PORT=${PORT}
-      - GAME_HOST=${GAME_HOST}
-      - REPLAY_HOST=${REPLAY_HOST}
-      - REAL_GAME_HOST=${REAL_GAME_HOST}
-      - ASSET_HOST=${ASSET_HOST}
-      - PROMO_HOST=${PROMO_HOST}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
-      - BuyBonusDefaultMulti=${BuyBonusDefaultMulti}
-      - FreeMinMulti=${FreeMinMulti}
-      - JackpotNormalStart=${JackpotNormalStart}
-      - JackpotNormalEnd=${JackpotNormalEnd}
-      - JackpotLongPercent=${JackpotLongPercent}
-      - JackpotLongStart=${JackpotLongStart}
-      - JackpotLongEnd=${JackpotLongEnd}
-      - SmallBaseMaxMulti=${SmallBaseMaxMulti}
+      - PORT: ${PORT}
+      - GAME_HOST: ${GAME_HOST}
+      - REPLAY_HOST: ${REPLAY_HOST}
+      - REAL_GAME_HOST: ${REAL_GAME_HOST}
+      - ASSET_HOST: ${ASSET_HOST}
+      - PROMO_HOST: ${PROMO_HOST}
+      - DB_HOST: ${DB_HOST}
+      - DB_PORT: ${DB_PORT}
+      - DB_USER: ${DB_USER}
+      - DB_PASSWORD: ${DB_PASSWORD}
+      - DB_NAME: ${DB_NAME}
+      - BuyBonusDefaultMulti: ${BuyBonusDefaultMulti}
+      - FreeMinMulti: ${FreeMinMulti}
+      - JackpotNormalStart: ${JackpotNormalStart}
+      - JackpotNormalEnd: ${JackpotNormalEnd}
+      - JackpotLongPercent: ${JackpotLongPercent}
+      - JackpotLongStart: ${JackpotLongStart}
+      - JackpotLongEnd: ${JackpotLongEnd}
+      - SmallBaseMaxMulti: ${SmallBaseMaxMulti}
     depends_on:
       - mysql
 
