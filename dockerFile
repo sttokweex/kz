@@ -16,6 +16,26 @@ COPY . .
 # Указываем порт, который будет открыт
 EXPOSE 8940
 
+# Указываем переменные окружения по умолчанию
+    ENV PORT=${PORT}
+    ENV GAME_HOST=${GAME_HOST}
+    ENV REPLAY_HOST=${REPLAY_HOST}
+    ENV REAL_GAME_HOST=${REAL_GAME_HOST}
+    ENV ASSET_HOST=${ASSET_HOST}
+    ENV PROMO_HOST=${PROMO_HOST}
+    ENV DB_HOST=${DB_HOST}
+    ENV DB_PORT=${DB_PORT}
+    ENV DB_USER=${DB_USER}
+    ENV DB_PASSWORD=${DB_PASSWORD}
+    ENV DB_NAME=${DB_NAME}
+    ENV BuyBonusDefaultMulti=${BuyBonusDefaultMulti}
+    ENV FreeMinMulti=${FreeMinMulti}
+    ENV JackpotNormalStart=${JackpotNormalStart}
+    ENV JackpotNormalEnd=${JackpotNormalEnd}
+    ENV JackpotLongPercent=${JackpotLongPercent}
+    ENV JackpotLongStart=${JackpotLongStart}
+    ENV JackpotLongEnd=${JackpotLongEnd}
+    ENV SmallBaseMaxMulti=${SmallBaseMaxMulti}
 
 # Команда для запуска приложения
 CMD ["node", "server.js"]
