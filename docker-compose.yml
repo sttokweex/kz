@@ -1,31 +1,32 @@
 
+ 
 
 services:
   app:
+    env_file: "./.env"
     build: .
-    
     ports:
       - "8940:8940"
     environment:
-      - PORT: ${PORT}
-      - GAME_HOST: ${GAME_HOST}
-      - REPLAY_HOST: ${REPLAY_HOST}
-      - REAL_GAME_HOST: ${REAL_GAME_HOST}
-      - ASSET_HOST: ${ASSET_HOST}
-      - PROMO_HOST: ${PROMO_HOST}
-      - DB_HOST: ${DB_HOST}
-      - DB_PORT: ${DB_PORT}
-      - DB_USER: ${DB_USER}
-      - DB_PASSWORD: ${DB_PASSWORD}
-      - DB_NAME: ${DB_NAME}
-      - BuyBonusDefaultMulti: ${BuyBonusDefaultMulti}
-      - FreeMinMulti: ${FreeMinMulti}
-      - JackpotNormalStart: ${JackpotNormalStart}
-      - JackpotNormalEnd: ${JackpotNormalEnd}
-      - JackpotLongPercent: ${JackpotLongPercent}
-      - JackpotLongStart: ${JackpotLongStart}
-      - JackpotLongEnd: ${JackpotLongEnd}
-      - SmallBaseMaxMulti: ${SmallBaseMaxMulti}
+      - PORT=8940
+      - GAME_HOST=http://51.250.83.228:8940
+      - REPLAY_HOST=http://51.250.83.228:8940
+      - REAL_GAME_HOST=http://51.250.83.228:8940
+      - ASSET_HOST=http://51.250.83.228:8940/resources
+      - PROMO_HOST=http://51.250.83.228:8940
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=a2pe4zx5p1
+      - DB_NAME=game_db
+      - BuyBonusDefaultMulti=100
+      - FreeMinMulti=10
+      - JackpotNormalStart=50
+      - JackpotNormalEnd=200
+      - JackpotLongPercent=5
+      - JackpotLongStart=300
+      - JackpotLongEnd=400
+      - SmallBaseMaxMulti=400
     depends_on:
       - mysql
 
