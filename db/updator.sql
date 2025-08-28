@@ -10,3 +10,4 @@ INSERT INTO `game_settings` (`g_name`, `g_title`,`createdAt`,`updatedAt`)
 VALUES ('vs20doghouse', 'The Dog House',now(),now());
 
 
+

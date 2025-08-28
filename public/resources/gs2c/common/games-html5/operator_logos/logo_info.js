@@ -2234,7 +2234,7 @@ UHTPatch({
 			
 			XT.TriggerEvent(InterfaceVars.Evt_DataToCode_CloseAllInterfaceWindows);
 			
-			if (window["UHT_GAME_CONFIG"]["LANGUAGE"] == "en")
+			if (window["UHT_GAME_CONFIG"]["LANGUAGE"] == "ko")
 				CustomMsgManager.HandleResponse(null, {custom_msg:JSON.stringify([{
 						title:"",
 						text:'       Pragmatic Play                                                        ,                                        .\n \n1.           ID                                                     .                          1                                   ID                   .\n \n2.                            @verifypp_slot                                                               .\n \n3.        Pragmatic Play                                                                                                              .',
@@ -2293,7 +2293,7 @@ UHTPatch({
 						globalTracking.SendEvent("uht_behaviour", "VerifyGameAuthenticity_Visible", 0, "BehaviourTracker");
 						GA_SENT_AM_VISIBLE = true;
 					}
-					if (window["UHT_GAME_CONFIG"]["LANGUAGE"] == "en")
+					if (window["UHT_GAME_CONFIG"]["LANGUAGE"] == "ko")
 					{
 						var newTextKO = "                           ";
 						var labels = this.buttons[btnIdx].GetComponentsInChildren(UILabel, true);
@@ -4705,7 +4705,7 @@ UHTPatch({
 	},
 	apply:function()
 	{
-		if (window["UHT_GAME_CONFIG_SRC"] != undefined && (UHT_GAME_CONFIG_SRC["lang"] == "ja" || UHT_GAME_CONFIG_SRC["lang"] == "en"))
+		if (window["UHT_GAME_CONFIG_SRC"] != undefined && (UHT_GAME_CONFIG_SRC["lang"] == "ja" || UHT_GAME_CONFIG_SRC["lang"] == "ko"))
 		{
 			var t = globalRuntime.sceneRoots[1].transform.Find("UI Root/XTRoot/Root/Paytable/Pages/Common_Info2/BetMenu/Title/BetMenuLabel");
 			if (t != null)

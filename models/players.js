@@ -4,6 +4,7 @@ const JSON5 = require("json5");
 const axios = require("axios");
 const Util = require("../utils/slot_utils");
 const EUtil = require("../utils/engine_utils");
+const logger = require("../config/logger.js")
 
 axios.defaults.timeout = 10000;
 
@@ -1216,7 +1217,7 @@ module.exports = (app) => {
 
         this.balance -= this.totalBet;
         this.machine.SpinFromPattern(this, param);
-
+   
         this.currentApi = this.apiManager.GameApi(this, prevGameMode, param);
         this.lastPattern = this.currentApi;
     };
@@ -1385,12 +1386,12 @@ module.exports = (app) => {
             pattern = this.findFreeByRtp(freeMinMoney, freeMaxMoney);
 
             if (pattern) {
-                console.log(rtpConfig)
+          
                 this.nextJackpot = Util.random(rtpConfig.JackpotNormalStart, rtpConfig.JackpotNormalEnd);
-                console.log(this.nextJackpot);
+          
                 if (Util.probability(rtpConfig.JackpotLongPercent)) {
                     this.nextJackpot = Util.random(rtpConfig.JackpotLongStart, rtpConfig.JackpotLongEnd);
-                    console.log(this.nextJackpot);
+                   
                 }
                 this.lastJackpotIndex = this.curIndex;
                 this.logInfo = {

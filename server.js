@@ -18,7 +18,15 @@ app.set("view engine", "ejs"); // используемый движок шабл
 
 // Установка кодировки UTF-8 для всех ответов
 app.use((req, res, next) => {
-  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.header("Access-Control-Allow-Origin", "http://localhost:8000"); // Или '*' для всех источников (не рекомендуется в проде)
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With");
+
+  // Для preflight запросов (OPTIONS) сразу отвечаем
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
   next();
 });
 

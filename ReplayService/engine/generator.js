@@ -42,7 +42,7 @@ module.exports.OnRequest_Generate = async (req, res) => {
     await user.update({ token: token, balance: 1000000, realRtp: 0, targetRtp: 80, totalDebit: 0, totalCredit: 0 });
 
     let [player, created] = await Player.findOrCreate({
-        where: { gameCode, userCode: user.userCode, agentCode: user.agentCode },
+        where: { gameCode, userCode: user.userCode, agentCode: user.id },
     });
     player.gameMode = 1;
     player.token = token;

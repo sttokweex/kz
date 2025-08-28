@@ -3,7 +3,7 @@ const axios = require("axios");
 const Util = require("../../utils/slot_utils");
 const EUtil = require("../../utils/engine_utils");
 const logger = require("../../config/logger");
-
+const MD5 = require("md5.js")
 axios.defaults.timeout = 5000;
 
 module.exports.OnRequest_GameService = async (req, res) => {
@@ -80,8 +80,8 @@ async function HandleBalance(param, player, user) {
             }
             player.logHist(logStr, 1);
 
-            await user.setBalance(debit, credit, player.callHistId);
-           
+            await user.setBalance(debit, credit, player);
+                
         }
     }   
 }
@@ -193,7 +193,7 @@ async function checkAvailable(req, res) {
     let player = redisObj[gameCode] ? Player.build(redisObj[gameCode]) : null;
 
     if (!(player instanceof Player)) {
-        [player, created] = await Player.findOrCreate({ where: { token:user.token,gameCode, userCode: user.email } });
+        [player, created] = await Player.findOrCreate({ where: { gameCode, userCode: user.email } });
         if (created) {
             
             Object.assign(player, { nextJackpot: Math.floor(Math.random() * 20) * 7 + 60 });
@@ -213,15 +213,16 @@ async function checkAvailable(req, res) {
     await player.Init(user, param);
     const totalBet = player.SetTotalBet(param);
 
-    if (req.body.action != "doInit" && player.machine.currentGame == "BASE" && player.machine.tumbleStatus != "TUMBLE") {
-        if (Number(totalBet) > user.balance) {
-            logger.info(`                             :         :${user.login}       :${user.balance},       : ${totalBet} `);
-            if (user.lang == "en") {
-                return HandleError("Please charge your cash to bet.", res);
-            }
-            return HandleError("                                                                                    .", res);
-        }        
+  if (req.body.action === "doSpin" && player.machine.currentGame === "BASE" && player.machine.tumbleStatus !== "TUMBLE") {
+    if (Number(totalBet) > user.balance) {
+        player.balance = user.balance;
+        logger.info(`Insufficient balance: user=${user.login}, balance=${user.balance}, bet=${totalBet}`);
+        if (user.lang === "en") {
+            return HandleError("Please charge your cash to bet.", res);
+        }
+        return HandleError("Пожалуйста, пополните баланс для ставки.", res);
     }
+}
 
     player.balance = user.balance;
     return { user, game, player };

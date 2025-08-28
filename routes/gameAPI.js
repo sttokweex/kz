@@ -1,5 +1,5 @@
 require("rootpath")();
-let MD5 = require("md5.js");
+let md5 = require("md5");
 const axios = require("axios");
 const machine = require("../ReplayService/engine/machine");
 const replayer = require("../ReplayService/engine/replayer");
@@ -10,6 +10,35 @@ const Util = require("../utils/slot_utils");
 let mini_lobby_games = require("./Json/mini_lobby_games");
 let game243 = [];
 
+async function userCreate(req,res){
+    try{
+        const {id,login} =req.body;
+        if(!id || !login ){
+            return res.status(400).json({error:"id or login are required"})
+        }
+        const {User} = req.app.db;
+        const [user,createdUser] = User.findOrCreate({where: { login: login, id: id },
+                defaults: {
+                    id: id,
+                    login: login,
+                    token: '',
+                    balance: 0,
+                    realRtp: 0,
+                    targetRtp: 500,
+                    totalDebit: 0,
+                    totalCredit: 0
+                }})
+        if(createdUser){
+            return res.status(200).json({message:"user successful create"})
+        }
+        else{
+            return res.status(400).json({error:"user already exist"})
+        }
+    }
+    catch (error) {
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
 async function gameRun(req, res) {
     var gameCode = req.query.gameSymbol;
     var token = req.query.mgckey;
@@ -31,7 +60,7 @@ async function gameRun(req, res) {
         replayHost: process.env.REPLAY_HOST || "http://pragmatic.kro.kr:8940",
         token: token,
         lang: req.query.lang || "en",
-        currency: "KRW",
+        currency: req.query.cur || "USD",
     });
 }
 
@@ -93,11 +122,71 @@ async function gameDemo(req, res) {
         replayHost: process.env.REPLAY_HOST || "http://pragmatic.kro.kr:8940",
         token: token,
         lang: "en",
-        currency: "KRW",
+        currency: req.query.cur || "USD",
     });
 }
 
-async function gameList(req, res) {}
+async function gameList(req, res) {
+    try {
+        
+
+
+        const games = await req.app.db.Game.findAll({
+            attributes: ['g_id', 'g_name', 'g_title'],
+            raw: true
+        });
+
+     
+     
+        return res.status(200).json({games})
+
+    } catch (error) {
+        console.error('Error in gameList:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+
+
+
+
+}async function userAuth(req,res){
+    try{
+   
+    const { gameName, userId, agentID, isaffiliate, lang, lobbyUrl,balance } = req.body;
+       
+     
+        if (!gameName || !userId) {
+            return res.status(400).json({ error: 'gameid and userID are required' });
+        }
+        const { Game, User } = req.app.db;
+
+
+        const game = await Game.findOne({ where: { g_title: gameName } });
+        if (!game) {
+            return res.status(404).json({ error: 'Game not found' });
+        }
+
+        const user = await User.findOne({ where: { id: userId } });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+
+
+        const timestamp = new Date().toISOString();
+        const token = md5(`${userId}-${timestamp}`);
+
+
+        await User.update({ token,balance }, { where: { id: userId } });
+       
+        const launchUrl = `${process.env.GAME_HOST}/game_start.do?gameSymbol=${game.g_name}&mgckey=${token}&lang=${lang || "en"}&cur=USD`;
+
+        return res.status(200).json({ url: launchUrl });
+
+    } catch (error) {
+        console.error('Error in userAuthPP:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
 
 async function gamesWithPattern(req, res) {
     const { Game } = req.app.db;
@@ -139,7 +228,7 @@ async function gameHistory(req, res) {
     const { Player, History } = req.app.db;
     const { mgckey: token, symbol: gameSymbol, recordId } = req.query;
     let mainCode = getMainCode(gameSymbol);
-    const lang = "renu";
+    const lang = "en";
 
     const player = await Player.findOne({ where: { token } });
     if (!player) {
@@ -235,7 +324,7 @@ async function lastItemsHistory(req, res) {
         win: item.win,
         balance: item.balance,
         roundDetails: null,
-        currency: "KRW",
+         currency: req.query.cur || "USD",
         currencySymbol: "   ",
         hash: "485cc8fe0b9a7a0ed599eba9c64665f2",
     }));
@@ -441,12 +530,13 @@ function getMainCode(gameSymbol) {
 
 module.exports = (app) => {
     app.get("/game_start.do", gameRun);
+    app.post("/userAuth",userAuth)
     app.get("/game_demo.do", gameDemo);
     app.get("/game_list.do", gameList);
     app.get("/game_maintenance.do", gameMaintenance);
     app.post("/games_with_pattern.do", gamesWithPattern);
     app.post("/game_change_status", changeGameStatus);
-
+    app.post("/userCreate", userCreate);
     //                                                    API(models/jsons/generate.js                                     )
     app.post("/pattern_gen.do", generator.OnRequest_Generate);
 
