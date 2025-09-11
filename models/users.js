@@ -44,11 +44,9 @@ module.exports = (app) => {
       gameID: player.gameCode,
       balance: this.balance,
     };
-    await axios.post(
-      `http://51.250.83.228:8000/slot/api/betWin.php`,
-      reqBody,
-      { timeout: 12000 }
-    );
+    await axios.post(`http://51.250.83.228:2000/slot/api/betWin.php`, reqBody, {
+      timeout: 12000,
+    });
     if (player.callHistId <= 0) {
       this.totalDebit += debit;
       this.totalCredit += credit;
