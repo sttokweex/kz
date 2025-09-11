@@ -45,7 +45,7 @@ module.exports = (app) => {
       balance: this.balance,
     };
     await axios.post(
-      `http://host.docker.internal:8000/slot/api/betWin.php`,
+      `http://51.250.83.228:8000/slot/api/betWin.php`,
       reqBody,
       { timeout: 12000 }
     );
