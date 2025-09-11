@@ -1,9 +1,8 @@
-
- 
-
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: dockerFile
     ports:
       - "2000:2000"
     environment:
@@ -39,7 +38,5 @@ services:
     volumes:
       - mysql2-data:/var/lib/mysql
 
-
 volumes:
   mysql2-data:
-  
