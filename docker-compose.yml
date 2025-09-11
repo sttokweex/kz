@@ -26,9 +26,9 @@ services:
       - JackpotLongEnd=400
       - SmallBaseMaxMulti=400
     depends_on:
-      - mysql2
+      - mysql
 
-  mysql2:
+  mysql:
     image: mysql:latest
     environment:
       - MYSQL_ROOT_PASSWORD=a2pe4zx5p1
@@ -37,6 +37,7 @@ services:
       - "2001:3306"
     volumes:
       - mysql2-data:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d
 
 volumes:
   mysql-data:
