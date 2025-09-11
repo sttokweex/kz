@@ -1,39 +1,40 @@
 require("rootpath")();
 const path = require("path");
-// Add ReplayService directory to module search paths
 module.paths.push(path.join(__dirname, "ReplayService"));
-// Initialize logger configuration
 const logger = require("./config/logger");
 const express = require("express");
+const cors = require("cors");
 const app = express();
-const { createOrFindGame, createOrFindUser } = require("./db/updator.js")(app);
+const { createOrFindGame } = require("./db/updator.js")(app);
 const http = require("http").createServer(app);
-const io = require("socket.io")(http);
-const redis = require("redis");
-
+const io = require("socket.io")(http, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    credentials: false,
+  },
+});
 require("dotenv").config();
 
-app.set("views", path.join(__dirname, "/")); // путь к папке с шаблонами
-app.set("view engine", "ejs"); // используемый движок шаблонов
+// Установка CORS middleware для всех HTTP-запросов
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  })
+);
 
-// Установка кодировки UTF-8 для всех ответов
+// Логирование всех входящих запросов для диагностики
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:8000"); // Или '*' для всех источников (не рекомендуется в проде)
-  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, X-Requested-With"
-  );
-
-  // Для preflight запросов (OPTIONS) сразу отвечаем
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(204);
-  }
-
+  logger.info(`Получен запрос: ${req.method} ${req.url}`);
   next();
 });
 
-// Настройка статических файлов с правильной кодировкой
+app.set("views", path.join(__dirname, "/"));
+app.set("view engine", "ejs");
+
 app.use(
   express.static(path.join(__dirname, "public"), {
     setHeaders: (res, path) => {
@@ -48,7 +49,6 @@ app.use(
   })
 );
 
-// Добавляем обработку статических файлов для ReplayService
 app.use(
   "/ReplayService",
   express.static(path.join(__dirname, "ReplayService"), {
@@ -95,6 +95,7 @@ module.exports = {
     SmallBaseMaxMulti: Number(process.env.SmallBaseMaxMulti) || 0,
   },
 };
+
 app.redis_client = {
   get: (key, callback) => {
     if (typeof callback === "function") {
@@ -105,7 +106,6 @@ app.redis_client = {
   },
   set: (key, value, ...args) => {
     inMemoryStore.set(key, value);
-    // Обработка callback, если он есть
     const callback = args.find((arg) => typeof arg === "function");
     if (callback) callback(null, "OK");
     return Promise.resolve("OK");
@@ -121,50 +121,36 @@ app.redis_client = {
   _executeCommand: () => Promise.resolve(null),
   on: (event, callback) => {
     if (event === "connect") {
-      // Имитируем событие connect
       setTimeout(callback, 0);
     }
-    return app.redis_client; // Для цепочки вызовов
+    return app.redis_client;
   },
 };
 
 app.redis_fallback_initialized = true;
 
-// Инициализация моделей
 app.db = {
   sequelize: sequelize,
   Sequelize: Sequelize,
 };
 require("models/index")(app);
-
-// Инициализация маршрутов
 require("routes/index")(app);
 
-// Обработка ошибок
 app.use((err, req, res, next) => {
   logger.error(err.stack);
   res.status(500).send(err);
 });
 
-// Функция запуска сервера после успешного подключения к БД
 async function start() {
   try {
-    // Подключение к базе данных
     await sequelize.authenticate();
-
     logger.info("✅ Успешное подключение к базе данных");
     await sequelize.sync();
     await createOrFindGame();
-    await createOrFindUser();
-    // Если требуется синхронизация моделей:
-    //  // или { alter: true } / { force: true } по необходимости
     logger.info("✅ Модели инициализированы");
-
-    // Используем in-memory Redis без попыток подключения
     logger.info("✅ Используется Redis fallback (in-memory)");
-
     const PORT = process.env.PORT || 8940;
-    http.listen(PORT, () => {
+    http.listen(PORT, "0.0.0.0", () => {
       logger.info(`🚀 Сервер запущен на порту ${PORT}`);
       logger.info(
         `🎮 Игровой хост: ${process.env.GAME_HOST || "http://localhost:8940"}`
@@ -184,7 +170,6 @@ async function start() {
 
 start();
 
-// Обработка WebSocket соединений
 io.on("connection", (socket) => {
   logger.info("✅ Пользователь подключился к WebSocket");
   socket.on("disconnect", () => {

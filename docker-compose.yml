@@ -13,7 +13,7 @@ services:
       - REAL_GAME_HOST=http://localhost:8940
       - ASSET_HOST=http://localhost:8940/resources
       - PROMO_HOST=http://localhost:8940
-      - DB_HOST=mysql
+      - DB_HOST=mysql2
       - DB_PORT=3306
       - DB_USER=root
       - DB_PASSWORD=a2pe4zx5p1
@@ -27,9 +27,9 @@ services:
       - JackpotLongEnd=400
       - SmallBaseMaxMulti=400
     depends_on:
-      - mysql
+      - mysql2
 
-  mysql:
+  mysql2:
     image: mysql:8.0
     environment:
       - MYSQL_ROOT_PASSWORD=a2pe4zx5p1
@@ -37,9 +37,9 @@ services:
     expose:
       - 3306
     volumes:
-      - mysql-data:/var/lib/mysql
+      - mysql2-data:/var/lib/mysql
 
 
 volumes:
-  mysql-data:
+  mysql2-data:
   
