@@ -33,8 +33,8 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=a2pe4zx5p1
       - MYSQL_DATABASE=game_db
-    expose:
-      - 2001
+    ports:
+      - "2001:3306"
     volumes:
       - mysql2-data:/var/lib/mysql
 

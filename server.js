@@ -163,7 +163,7 @@ async function start() {
       logger.info("🔌 WebSocket сервер готов к подключениям");
     });
   } catch (e) {
-    logger.error("❌ Ошибка при запуске сервера:", e.message);
+    logger.error("❌ Ошибка при запуске сервера:", e);
     process.exit(1);
   }
 }
