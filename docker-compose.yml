@@ -14,7 +14,7 @@ services:
       - ASSET_HOST=http://51.250.83.228:8940/resources
       - PROMO_HOST=http://51.250.83.228:8940
       - DB_HOST=mysql2
-      - DB_PORT=3306
+      - DB_PORT=2001
       - DB_USER=root
       - DB_PASSWORD=a2pe4zx5p1
       - DB_NAME=game_db
