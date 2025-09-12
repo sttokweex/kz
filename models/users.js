@@ -1,5 +1,6 @@
 const axios = require("axios");
 const MD5 = require("md5.js");
+const logger = require("../config/logger");
 module.exports = (app) => {
   const { Sequelize } = app.db;
   const User = app.db.sequelize.define("user", {
@@ -44,9 +45,28 @@ module.exports = (app) => {
       gameID: player.gameCode,
       balance: this.balance,
     };
-    await axios.post(`http://51.250.83.228:2000/slot/api/betWin.php`, reqBody, {
-      timeout: 12000,
-    });
+    try {
+      const response = await axios.post(
+        "http://docker.host.internal/slot/api/customBet.php",
+        reqBody,
+        {
+          timeout: 12000,
+        }
+      );
+      // Если всё прошло успешно, можно работать с response
+      console.log(response.data);
+    } catch (error) {
+      // Ошибка от сервера
+      if (error.response) {
+        logger.info(error.response.data);
+      } else if (error.request) {
+        logger.info(error.request);
+        // Ошибка при настройке запроса
+      } else {
+        logger.info(error);
+      }
+    }
+
     if (player.callHistId <= 0) {
       this.totalDebit += debit;
       this.totalCredit += credit;

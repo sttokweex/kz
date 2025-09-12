@@ -133,8 +133,6 @@ async function gameDemo(req, res) {
 
 async function gameList(req, res) {
   try {
-  
-
     const games = await req.app.db.Game.findAll({
       attributes: ["g_id", "g_name", "g_title"],
       raw: true,
@@ -169,7 +167,10 @@ async function userAuth(req, res) {
     const timestamp = new Date().toISOString();
     const token = md5(`${userId}-${timestamp}`);
 
-    await User.update({ token:token, balance:balance }, { where: { id: userId } });
+    await User.update(
+      { token: token, balance: balance },
+      { where: { id: userId } }
+    );
 
     const launchUrl = `${process.env.GAME_HOST}/game_start.do?gameSymbol=${
       game.g_name
