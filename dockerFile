@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Указываем порт, который будет открыт
-EXPOSE 2000
+EXPOSE 2002
 
 # Команда для запуска приложения
 CMD ["node", "server.js"]
