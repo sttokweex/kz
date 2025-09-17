@@ -47,7 +47,7 @@ module.exports = (app) => {
     };
     try {
       const response = await axios.post(
-        "http://docker.host.internal/slot/api/customBet.php",
+        "http://localhost:2200/slot/api/customBet.php",
         reqBody,
         {
           timeout: 12000,
