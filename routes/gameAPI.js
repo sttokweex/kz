@@ -565,7 +565,7 @@ module.exports = (app) => {
     });
   });
   app.get("/gs2c/minilobby/games", (req, res) => {
-    res.json(mini_lobby_games);
+
   });
   app.get("/gs2c/minilobby/start", miniLobbyGameRun);
   app.get("/gs2c/reloadBalance.do", async (req, res) => {
