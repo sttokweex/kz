@@ -564,10 +564,8 @@ module.exports = (app) => {
       status: "success",
     });
   });
-  app.get("/gs2c/minilobby/games", (req, res) => {
- 
-  });
-  app.get("/gs2c/minilobby/start", miniLobbyGameRun);
+  app.get("/gs2c/minilobby/games", (req, res) => {});
+  app.get("/gs2c/minilobby/start");
   app.get("/gs2c/reloadBalance.do", async (req, res) => {
     let token = req.query.mgckey;
     let user = await req.app.db.User.findOne({ where: { token } });
