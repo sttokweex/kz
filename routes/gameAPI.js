@@ -7,7 +7,6 @@ const promo = require("../ReplayService/engine/promo");
 const generator = require("../ReplayService/engine/generator");
 const ASSET_HOST = process.env.ASSET_HOST || "http://onlinecasino0001.com:8989";
 const Util = require("../utils/slot_utils");
-let mini_lobby_games = require("./Json/mini_lobby_games");
 const logger = require("../config/logger");
 let game243 = [];
 
@@ -68,44 +67,113 @@ async function gameRun(req, res) {
 }
 
 async function miniLobbyGameRun(req, res) {
-  const gameCode = req.query.gameSymbol;
-  const token = req.query.mgckey;
-  const { Game, User } = req.app.db;
-  const user = await User.findOne({ where: { token: token } });
-  if (user.agentCode == "justslot") {
-    const agentCode = user.userCode.split("#JS#")[0];
-    const userCode = user.userCode.split("#JS#")[1];
-    const url = "http://justslot.kro.kr:2422/api";
-    const jsonBody = {
-      method: "game_launch",
-      agent_code: agentCode,
-      agent_token: "token",
-      user_code: userCode,
-      provider_code: "PRAGMATIC_OLD",
-      game_code: gameCode,
-      rtp: user.targetRtp,
-    };
-    try {
-      const ret = await axios.post(url, jsonBody);
-      if (ret.data.status == 1) {
-        return res.redirect(ret.data.launch_url);
-      } else {
-        return res.render("gs2c/game/maintenancing.ejs");
-      }
-    } catch (error) {
-      console.log(error.message);
-      return res.render("gs2c/game/maintenancing.ejs");
+  // const gameCode = req.query.gameSymbol;
+  // const token = req.query.mgckey;
+  // const { Game, User } = req.app.db;
+  // const user = await User.findOne({ where: { token: token } });
+  // if (user.agentCode == "justslot") {
+  //   const agentCode = user.userCode.split("#JS#")[0];
+  //   const userCode = user.userCode.split("#JS#")[1];
+  //   const url = "http://justslot.kro.kr:2422/api";
+  //   const jsonBody = {
+  //     method: "game_launch",
+  //     agent_code: agentCode,
+  //     agent_token: "token",
+  //     user_code: userCode,
+  //     provider_code: "PRAGMATIC_OLD",
+  //     game_code: gameCode,
+  //     rtp: user.targetRtp,
+  //   };
+  //   try {
+  //     const ret = await axios.post(url, jsonBody);
+  //     if (ret.data.status == 1) {
+  //       return res.redirect(ret.data.launch_url);
+  //     } else {
+  //       return res.render("gs2c/game/maintenancing.ejs");
+  //     }
+  //   } catch (error) {
+  //     console.log(error.message);
+  //     return res.render("gs2c/game/maintenancing.ejs");
+  //   }
+  // } else {
+  //   const game = await Game.findOne({ where: { g_name: gameCode } });
+  //   if (game.status == 1) {
+  //     gameRun(req, res);
+  //   } else {
+  //     return res.render("gs2c/game/maintenancing.ejs");
+  //   }
+  // }
+}
+async function createDemoUser(req, res) {
+  try {
+    const { Game, User } = req.app.db;
+    const { gameName, userId } = req.query; // Get gameName and userId from query parameters
+
+    // Validate inputs
+    if (!gameName || !userId) {
+      return res
+        .status(400)
+        .json({ error: "gameName and userId are required" });
     }
-  } else {
-    const game = await Game.findOne({ where: { g_name: gameCode } });
-    if (game.status == 1) {
-      gameRun(req, res);
-    } else {
-      return res.render("gs2c/game/maintenancing.ejs");
+
+    // Validate userId is an integer
+    const parsedUserId = parseInt(userId, 10);
+    if (isNaN(parsedUserId) || parsedUserId.toString() !== userId) {
+      return res.status(400).json({ error: "userId must be an integer" });
     }
+
+    // Generate demo user ID tied to the provided userId
+
+    const userNow = await User.findOne({
+      where: { id: userId },
+    });
+    const demoLogin = `demo_user_${userNow.login}`;
+    const timestamp = new Date().toISOString();
+    const demoToken = md5(`${demoLogin}-${timestamp}`);
+    // Check if demo user already exists, create if not
+    const [user, created] = await User.findOrCreate({
+      where: { login: demoLogin },
+      defaults: {
+        login: demoLogin,
+        token: demoToken,
+        balance: 100000, // Starting balance for demo mode
+        realRtp: 0,
+        targetRtp: 500,
+        totalDebit: 0,
+        totalCredit: 0,
+      },
+    });
+    console.log(user, created, demoLogin);
+    // If user was not created (already exists), update token and balance
+    if (!created) {
+      await User.update(
+        { token: demoToken, balance: 100000 },
+        { where: { login: demoLogin } }
+      );
+    }
+    // Find the specific game based on gameName (using g_name to match gameid from URL)
+    const game = await Game.findOne({
+      where: { g_title: gameName }, // Match g_name and ensure game is active
+    });
+    if (!game) {
+      return res
+        .status(404)
+        .json({ error: `Game ${gameName} not found or not active` });
+    }
+    // Construct the demo URL using game_start.do
+    const demoUrl = `/game_start.do?gameSymbol=${game.g_name}&mgckey=${demoToken}&lang=en&cur=USD`;
+    // Return iframe URL
+    return res.status(200).json({
+      message: "Demo user ready",
+      iframeUrl: `${
+        process.env.GAME_HOST || "http://pragmatic.kro.kr:8940"
+      }${demoUrl}`,
+    });
+  } catch (error) {
+    console.error("Error in createDemoUser:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }
-
 async function gameDemo(req, res) {
   var gameCode = req.query.game;
   var token = req.query.token;
@@ -115,7 +183,6 @@ async function gameDemo(req, res) {
   if (!game) {
     return res.render("gs2c/game/maintenancing.ejs");
   }
-
   res.render(`gs2c/index.ejs`, {
     title: gameCode,
     gameName: gameCode,
@@ -558,7 +625,7 @@ module.exports = (app) => {
   app.post("/pattern_gen.do", generator.OnRequest_Generate);
 
   app.post("/gs2c/v3/gameService", machine.OnRequest_GameService);
-
+  app.get("/gameStartDemo", createDemoUser);
   app.get("/isAlive", (req, res) => {
     res.json({
       status: "success",
