@@ -226,7 +226,7 @@ async function userAuth(req, res) {
       return res.status(404).json({ error: "Game not found" });
     }
 
-    const user = await User.findOne({ where: { id: userId } });
+    const user = await User.findOne({ where: { outerId: userId } });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -236,7 +236,7 @@ async function userAuth(req, res) {
 
     await User.update(
       { token: token, balance: balance },
-      { where: { id: userId } }
+      { where: { outerId: userId } }
     );
 
     const launchUrl = `${process.env.GAME_HOST}/game_start.do?gameSymbol=${
