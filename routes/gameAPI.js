@@ -18,9 +18,9 @@ async function userCreate(req, res) {
     }
     const { User } = req.app.db;
     const [user, createdUser] = User.findOrCreate({
-      where: { login: login, id: id },
+      where: { login: login, outerId: id },
       defaults: {
-        id: id,
+        outerId: id,
         login: login,
         token: "",
         balance: 0,

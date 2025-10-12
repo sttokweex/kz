@@ -9,6 +9,7 @@ module.exports = (app) => {
     email: { type: Sequelize.STRING, allowNull: false, defaultValue: "" },
     token: { type: Sequelize.STRING, allowNull: false, defaultValue: "" },
     balance: { type: Sequelize.DOUBLE, allowNull: false, defaultValue: 0 },
+    outerId: { type: Sequelize.INTEGER, allowNull: false },
     realRtp: {
       type: Sequelize.DOUBLE(10, 2),
       allowNull: false,
@@ -36,7 +37,7 @@ module.exports = (app) => {
       )
       .digest("hex");
     const reqBody = {
-      userID: this.id,
+      userID: this.outerId,
       betAmount: player.virtualBet,
       winAmount: player.machine.winMoney,
       transactionID: txnID,
