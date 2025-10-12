@@ -125,7 +125,7 @@ async function createDemoUser(req, res) {
     // Generate demo user ID tied to the provided userId
 
     const userNow = await User.findOne({
-      where: { id: userId },
+      where: { outerId: userId },
     });
     const demoLogin = `demo_user_${userNow.login}`;
     const timestamp = new Date().toISOString();
