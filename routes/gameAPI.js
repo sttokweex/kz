@@ -18,9 +18,9 @@ async function userCreate(req, res) {
     }
     const { User } = req.app.db;
     const [user, createdUser] = User.findOrCreate({
-      where: { login: login, id: id },
+      where: { login: login, outerId: id },
       defaults: {
-        id: id,
+        outerId: id,
         login: login,
         token: "",
         balance: 0,
@@ -125,7 +125,7 @@ async function createDemoUser(req, res) {
     // Generate demo user ID tied to the provided userId
 
     const userNow = await User.findOne({
-      where: { id: userId },
+      where: { outerId: userId },
     });
     const demoLogin = `demo_user_${userNow.login}`;
     const timestamp = new Date().toISOString();
@@ -226,7 +226,7 @@ async function userAuth(req, res) {
       return res.status(404).json({ error: "Game not found" });
     }
 
-    const user = await User.findOne({ where: { id: userId } });
+    const user = await User.findOne({ where: { outerId: userId } });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -236,7 +236,7 @@ async function userAuth(req, res) {
 
     await User.update(
       { token: token, balance: balance },
-      { where: { id: userId } }
+      { where: { outerId: userId } }
     );
 
     const launchUrl = `${process.env.GAME_HOST}/game_start.do?gameSymbol=${

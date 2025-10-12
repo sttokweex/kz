@@ -9,6 +9,7 @@ module.exports = (app) => {
     email: { type: Sequelize.STRING, allowNull: false, defaultValue: "" },
     token: { type: Sequelize.STRING, allowNull: false, defaultValue: "" },
     balance: { type: Sequelize.DOUBLE, allowNull: false, defaultValue: 0 },
+    outerId: { type: Sequelize.INTEGER, allowNull: false },
     realRtp: {
       type: Sequelize.DOUBLE(10, 2),
       allowNull: false,
@@ -36,7 +37,7 @@ module.exports = (app) => {
       )
       .digest("hex");
     const reqBody = {
-      userID: this.id,
+      userID: this.outerId,
       betAmount: player.virtualBet,
       winAmount: player.machine.winMoney,
       transactionID: txnID,
@@ -47,16 +48,15 @@ module.exports = (app) => {
     };
     try {
       const response = await axios.post(
-        "http://5.129.253.12:2200/slot/api/customBet.php",
+        "http://5.129.253.12:2202/slot/api/customBet.php",
         reqBody,
         {
           timeout: 12000,
         }
       );
       // Если всё прошло успешно, можно работать с response
-    } catch (error) {
-      // Ошибка от сервера
-    }
+      console.log(response.data);
+    } catch (error) {}
 
     if (player.callHistId <= 0) {
       this.totalDebit += debit;
