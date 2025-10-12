@@ -55,17 +55,7 @@ module.exports = (app) => {
       );
       // Если всё прошло успешно, можно работать с response
       console.log(response.data);
-    } catch (error) {
-      // Ошибка от сервера
-      if (error.response) {
-        logger.info(error.response.data);
-      } else if (error.request) {
-        logger.info(error.request);
-        // Ошибка при настройке запроса
-      } else {
-        logger.info(error);
-      }
-    }
+    } catch (error) {}
 
     if (player.callHistId <= 0) {
       this.totalDebit += debit;
