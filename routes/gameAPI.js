@@ -107,7 +107,7 @@ async function miniLobbyGameRun(req, res) {
 async function createDemoUser(req, res) {
   try {
     const { Game, User } = req.app.db;
-    const { gameName, userId } = req.query; // Get gameName and userId from query parameters
+    const { gameName, userId, lang } = req.query; // Get gameName and userId from query parameters
 
     // Validate inputs
     if (!gameName || !userId) {
@@ -149,7 +149,7 @@ async function createDemoUser(req, res) {
     // If user was not created (already exists), update token and balance
     if (!created) {
       await User.update(
-        { token: demoToken, balance: 100000 },
+        { token: demoToken },
         { where: { login: demoLogin } }
       );
     }
@@ -163,7 +163,7 @@ async function createDemoUser(req, res) {
         .json({ error: `Game ${gameName} not found or not active` });
     }
     // Construct the demo URL using game_start.do
-    const demoUrl = `/game_start.do?gameSymbol=${game.g_name}&mgckey=${demoToken}&lang=en&cur=USD`;
+    const demoUrl = `/game_start.do?gameSymbol=${game.g_name}&mgckey=${demoToken}&lang=${lang}&cur=USD`;
     // Return iframe URL
     return res.status(200).json({
       message: "Demo user ready",
