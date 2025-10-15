@@ -128,14 +128,12 @@ async function createDemoUser(req, res) {
       where: { outerId: userId },
     });
     const demoLogin = `demo_user_${userNow.login}`;
-    const out = userNow.outerId;
     const timestamp = new Date().toISOString();
     const demoToken = md5(`${demoLogin}-${timestamp}`);
     // Check if demo user already exists, create if not
     const [user, created] = await User.findOrCreate({
       where: { login: demoLogin },
       defaults: {
-        outerId: out,
         login: demoLogin,
         token: demoToken,
         balance: 100000, // Starting balance for demo mode
@@ -148,10 +146,7 @@ async function createDemoUser(req, res) {
     console.log(user, created, demoLogin);
     // If user was not created (already exists), update token and balance
     if (!created) {
-      await User.update(
-        { token: demoToken },
-        { where: { login: demoLogin } }
-      );
+      await User.update({ token: demoToken }, { where: { login: demoLogin } });
     }
     // Find the specific game based on gameName (using g_name to match gameid from URL)
     const game = await Game.findOne({
