@@ -141,7 +141,7 @@ async function start() {
   try {
     await sequelize.authenticate();
     logger.info("✅ Успешное подключение к базе данных");
-    await sequelize.sync({ force: true });
+    await sequelize.sync();
     await createOrFindGame();
     logger.info("✅ Модели инициализированы");
     logger.info("✅ Используется Redis fallback (in-memory)");
