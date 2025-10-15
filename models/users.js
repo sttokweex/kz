@@ -9,7 +9,7 @@ module.exports = (app) => {
     email: { type: Sequelize.STRING, allowNull: false, defaultValue: "" },
     token: { type: Sequelize.STRING, allowNull: false, defaultValue: "" },
     balance: { type: Sequelize.DOUBLE, allowNull: false, defaultValue: 0 },
-    outerId: { type: Sequelize.INTEGER, allowNull: false },
+    outerId: { type: Sequelize.INTEGER, allowNull: true },
     realRtp: {
       type: Sequelize.DOUBLE(10, 2),
       allowNull: false,

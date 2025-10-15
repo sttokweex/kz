@@ -135,7 +135,6 @@ async function createDemoUser(req, res) {
     const [user, created] = await User.findOrCreate({
       where: { login: demoLogin },
       defaults: {
-        outerId: out,
         login: demoLogin,
         token: demoToken,
         balance: 100000, // Starting balance for demo mode
