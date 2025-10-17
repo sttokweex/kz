@@ -48,7 +48,7 @@ module.exports = (app) => {
     };
     try {
       const response = await axios.post(
-        "http://5.129.253.12:2202/slot/api/customBet.php",
+        "http://5.129.253.12:2200/slot/api/customBet.php",
         reqBody,
         {
           timeout: 12000,
